@@ -9,7 +9,11 @@ def signup(request):
     if request.method == 'POST':
         email_data = request.POST['email']
         password = request.POST['password']
-        confirm = request.POST['confirm']
+        confirm = request.POST['password-check']
+
+        if not email_data:
+            messages.error(request, '이메일을 다시 입력해주세요.')
+            return render(request, 'accounts/signup.html')
 
         if User.objects.filter(username=email_data).exists():
             messages.error(request, '이미 사용 중인 이메일입니다.')
