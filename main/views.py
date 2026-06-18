@@ -9,10 +9,15 @@ def signup_login(request):
     return render(request, 'pages/signup_login.html')
 
 def dashboard(request):
-    return render(request, 'pages/dashboard.html')
+    pots = Pot.objects.all()
+    return render(request, 'pages/dashboard.html', {'pots': pots})
 
-def join_pot(request):
-    return render(request, 'pages/join_pot.html')
+def pot_choice(request):
+    return render(request, 'pages/pot_choice.html')
+
+def join_pot(request, pot_id):
+    pot = get_object_or_404(Pot, pk=pot_id)
+    return render(request, 'pages/join_pot.html', {'pot': pot})
 
 def new_pot(request):
     if not request.user.is_authenticated:
