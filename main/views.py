@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
+import random
 
 # Create your views here.
 def onboarding(request):
@@ -25,12 +26,18 @@ def join_pot_action(request, pot_id):
     if not request.user.is_authenticated:
         return redirect('accounts:login')
 
+    user = request.user
     pot = get_object_or_404(Pot, pk=pot_id)
 
     if request.user in pot.participants.all():
-        pot.participants.remove(request.user)
-    else:
-        pot.participants.add(redquest.user)
+        return redirect('main:dashboard')
+
+    if request.method == "POST":
+        input_code = request.POST.get('entry_code') #html파일 작성되고 난 뒤 확인 필요
+        if input_code == pot.pot_code and user.profile.point >= pot.fee:
+            pot.participants.add(user)
+            user.profile.point -= pot.fee
+            user_profile.save()
     return redirect('main:dashboard')
 
 def new_pot(request):
@@ -58,6 +65,10 @@ def create(request):
     new_pot.fee = fee
     new_pot.total_prize = (fee * pot_people) + 500
 
+    random_code = random.randint(100000,999999)
+    new_pot.pot_code = str(random_code)
     new_pot.save()
+
+    new_pot.participants.add(request.user)
 
     return redirect('main:dashboard')

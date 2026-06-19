@@ -9,4 +9,5 @@ class Pot(models.Model):
     total_prize = models.IntegerField()
     pot_people = models.IntegerField()
     participants = models.ManyToManyField(User, related_name='join_pots', blank=True)
+    pot_code = models.CharField(max_length=6, null=True, blank=True)
     
