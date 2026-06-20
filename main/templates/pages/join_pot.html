@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>팟 참여하기</title>
+</head>
+<body>
+    <main>
+        {% if pot %}
+        <h1>{{ pot.pot_name }} 참여하기</h1>
+        {% else %}
+        <h1>팟 참여하기</h1>
+        {% endif %}
+        <form action="{% url 'main:join_pot_action' %}" method="post">
+            {% csrf_token %}
+            <label for="entry-code">참여 코드</label>
+            <input id="entry-code" type="text" name="entry_code" maxlength="6" required>
+            <button type="submit">참여하기</button>
+        </form>
+    </main>
+</body>
+</html>

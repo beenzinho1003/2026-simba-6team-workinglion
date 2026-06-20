@@ -43,6 +43,9 @@
                         </div>
                     </div>
                     <p class="bottom-text"></p>
+                    {% if nickname_error %}
+                    <p>{{ nickname_error }}</p>
+                    {% endif %}
                 </div>
                 
             </div>
