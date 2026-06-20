@@ -12,32 +12,51 @@ def signup_login(request):
 def dashboard(request):
     if not request.user.is_authenticated:
         return redirect('accounts:login')
-    pots = Pot.objects.all()
+    pots = Pot.objects.filter(participants=request.user)
     return render(request, 'pages/dashboard.html', {'pots': pots})
 
 def pot_choice(request):
     return render(request, 'pages/pot-choice.html')
 
-def join_pot(request, pot_id):
-    pot = get_object_or_404(Pot, pk=pot_id)
-    return render(request, 'pages/join_pot.html', {'pot': pot})
-
-def join_pot_action(request, pot_id):
+def join_pot(request, pot_id=None):
     if not request.user.is_authenticated:
         return redirect('accounts:login')
 
-    user = request.user
-    pot = get_object_or_404(Pot, pk=pot_id)
+    if pot_id:
+        pot = get_object_or_404(Pot, pk=pot_id)
+        return render(request, 'pages/join_pot.html', {'pot': pot})
 
-    if request.user in pot.participants.all():
+    return render(request, 'pages/join_pot.html')
+
+def join_pot_action(request, pot_id=None):
+    if not request.user.is_authenticated:
+        return redirect('accounts:login')
+
+    if request.method != "POST":
+        return redirect('main:join_pot')
+
+    input_code = request.POST.get('entry_code')
+
+    if pot_id:
+        pot = get_object_or_404(Pot, pk=pot_id)
+    else:
+        if not Pot.objects.filter(pot_code=input_code).exists():
+            return redirect('main:join_pot')
+        pot = Pot.objects.get(pot_code=input_code)
+
+    user = request.user
+
+    if pot.participants.filter(id=user.id).exists():
         return redirect('main:dashboard')
 
-    if request.method == "POST":
-        input_code = request.POST.get('entry_code') #html파일 작성되고 난 뒤 확인 필요
-        if input_code == pot.pot_code and user.profile.point >= pot.fee:
-            pot.participants.add(user)
-            user.profile.point -= pot.fee
-            user_profile.save()
+    if pot.participants.count() >= pot.pot_people:
+        return redirect('main:dashboard')
+
+    user_profile = request.user.profile
+    if input_code == pot.pot_code and user_profile.point >= pot.fee:
+        pot.participants.add(user)
+        user_profile.point -= pot.fee
+        user_profile.save()
     return redirect('main:dashboard')
 
 def new_pot(request):

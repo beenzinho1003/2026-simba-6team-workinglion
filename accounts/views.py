@@ -35,11 +35,17 @@ def signup(request):
     return render(request, 'accounts/signup.html')
 
 def signup_nickname(request):
-    if request.method =='POST':    
-        nickname = request.POST['nickname']
+    email_data = request.session.get('temp_email')
+    password = request.session.get('temp_password')
 
-        email_data = request.session.get('temp_email')
-        password = request.session.get('temp_password')
+    if not email_data or not password:
+        return redirect('accounts:signup')
+
+    if request.method == 'POST':
+        nickname = request.POST.get('nickname', '').strip()
+        if not nickname or len(nickname) > 10:
+            context = {'nickname_error': '닉네임은 1자 이상 10자 이하로 입력해주세요.'}
+            return render(request, 'accounts/signup_nickname.html', context)
 
         newuser = User.objects.create_user(
             username=email_data,
