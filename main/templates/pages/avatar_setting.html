@@ -1,0 +1,111 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'main/css/avatar_setting.css' %}">
+    <title>Document</title>
+</head>
+<body>
+    <div class="main">
+        <div class="title-frame">
+            <div class="title-box">
+                <a href="{% url 'main:dashboard' %}" class="back-btn">
+                    <p class="back-dir">←</p>
+                </a>
+                <p class="title-text">내 캐릭터 색상 선택</p>
+            </div>
+            <div class="pot-name-box">
+                <!--pot name 아직 동적할당 안함-->    
+                <p class="pot-name-text">pot-name</p>
+            </div> 
+        </div>
+        <div class="avatar-frame">
+            <div class="avatar">
+                {% include 'pages/_bird_svg.html' %}
+            </div>
+            <p class="color-text" id="color-name-text">파란색</p>
+        </div>
+        <!--액션주소 아직모름
+        //추가로 동일한색상 로직 아직없음-->
+        <form method="POST">
+            {% csrf_token %} 
+            <div class="color-select-frame">
+                <p class="select-text">색상 선택</p>
+                <div class="radio-container">
+                    <input type="radio" id="color-blue" name="avatar_color" value="blue" checked required>
+                    <label for="color-blue" class="color-circle" style="background-color: #5B79FF;"></label>
+
+                    <input type="radio" id="color-purple" name="avatar_color" value="purple" required>
+                    <label for="color-purple" class="color-circle" style="background-color: #CB33DF;"></label>
+
+                    <input type="radio" id="color-olive" name="avatar_color" value="olive" required>
+                    <label for="color-olive" class="color-circle" style="background-color: #9DBF4A;"></label>
+
+                    <input type="radio" id="color-red" name="avatar_color" value="red" required>
+                    <label for="color-red" class="color-circle" style="background-color: #E85555;"></label>
+
+                    <input type="radio" id="color-gray" name="avatar_color" value="gray" required>
+                    <label for="color-gray" class="color-circle" style="background-color: #A9A9A9;"></label>
+
+                    <input type="radio" id="color-pink" name="avatar_color" value="pink" required>
+                    <label for="color-pink" class="color-circle" style="background-color: #FF5A96;"></label>
+                </div>
+            </div>
+
+            <div class="confirm-frame">
+                <div class="line"></div>
+                <div class="warning-box">
+                    <svg class="warning-diagram" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M10.0003 3.33329C13.6762 3.33329 16.667 6.32413 16.667 9.99996C16.667 13.6758 13.6762 16.6666 10.0003 16.6666C6.32449 16.6666 3.33366 13.6758 3.33366 9.99996C3.33366 6.32413 6.32449 3.33329 10.0003 3.33329ZM10.0003 1.66663C5.39783 1.66663 1.66699 5.39746 1.66699 9.99996C1.66699 14.6025 5.39783 18.3333 10.0003 18.3333C14.6028 18.3333 18.3337 14.6025 18.3337 9.99996C18.3337 5.39746 14.6028 1.66663 10.0003 1.66663ZM10.8337 12.5H9.16699V14.1666H10.8337V12.5ZM9.16699 10.8333H10.8337L11.2503 5.83329H8.75033L9.16699 10.8333Z" fill="black"/>
+                    </svg>
+                    <p class="warning-text">같은 팟 안에서 동일한 색상은 선택할 수 없어요!</p>
+                </div>
+                <button class="submit-btn" type="submit">이 색상으로 팟 입장하기</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+
+<script>
+    const colorData = {
+        'blue': { hex: '#5B79FF', wing: '#4A63CF', name: '파란색' },
+        'purple': { hex: '#CB33DF', wing: '#A028AF', name: '보라색' },
+        'olive': { hex: '#9DBF4A', wing: '#7E993B', name: '연두색' },
+        'red': { hex: '#E85555', wing: '#C93E3E', name: '빨간색' },
+        'gray': { hex: '#A9A9A9', wing: '#808080', name: '회색' },
+        'pink': { hex: '#FF5A96', wing: '#D83B76', name: '분홍색' }
+    };
+
+    const colorText = document.getElementById('color-name-text');
+    const avatarBody = document.getElementById('avatar-body');
+    
+    const wingElements = {
+        leftFill: document.getElementById('wing-left-fill'),
+        leftStroke: document.getElementById('wing-left-stroke'),
+        rightFill: document.getElementById('wing-right-fill'),
+        rightStroke: document.getElementById('wing-right-stroke')
+    };
+
+    const radioButtons = document.querySelectorAll('input[name="avatar_color"]');
+
+    radioButtons.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            const selectedValue = e.target.value; 
+            const selectedInfo = colorData[selectedValue]; 
+
+            if(!selectedInfo) return; 
+
+            if(colorText) colorText.innerText = selectedInfo.name;
+            if(avatarBody) avatarBody.style.fill = selectedInfo.hex;
+
+            if(wingElements.leftFill) wingElements.leftFill.style.fill = selectedInfo.wing;
+            if(wingElements.rightFill) wingElements.rightFill.style.fill = selectedInfo.wing;
+
+            if(wingElements.leftStroke) wingElements.leftStroke.style.stroke = selectedInfo.wing;
+            if(wingElements.rightStroke) wingElements.rightStroke.style.stroke = selectedInfo.wing;
+        });
+    });
+</script>
