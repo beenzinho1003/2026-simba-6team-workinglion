@@ -119,6 +119,7 @@ def join_pot_action(request, pot_id=None):
         pot.participants.add(user)
         user_profile.point -= pot.fee
         user_profile.save()
+        return redirect('main:avatar_setting', pot_id=pot.id)
     return redirect('main:dashboard')
 
 def new_pot(request):
@@ -152,4 +153,58 @@ def create(request):
 
     new_pot.participants.add(request.user)
 
-    return redirect('main:dashboard')
+    return redirect('main:avatar_setting', pot_id=new_pot.id)
+
+
+def avatar_setting(request, pot_id):
+    if not request.user.is_authenticated:
+        return redirect('accounts:login')
+
+    pot = get_object_or_404(Pot, pk=pot_id)
+
+    if not pot.participants.filter(id=request.user.id).exists():
+        return redirect('main:dashboard')
+
+    selected_color = None
+    my_avatar = None
+
+    if PotAvatar.objects.filter(pot=pot, user=request.user).exists():
+        my_avatar = PotAvatar.objects.get(pot=pot, user=request.user)
+        selected_color = my_avatar.color
+
+    used_colors = []
+    avatars = PotAvatar.objects.filter(pot=pot)
+    for avatar in avatars:
+        if avatar.user != request.user:
+            used_colors.append(avatar.color)
+
+    error = None
+
+    if request.method == 'POST':
+        color = request.POST.get('color')
+        colors = ['blue', 'purple', 'green', 'red', 'gray', 'pink']
+
+        if not color or color not in colors:
+            error = '색상을 선택해주세요.'
+        elif PotAvatar.objects.filter(pot=pot, color=color).exists() and color != selected_color:
+            error = '이미 다른 참가자가 선택한 색상입니다.'
+        else:
+            if my_avatar:
+                my_avatar.color = color
+                my_avatar.save()
+            else:
+                avatar = PotAvatar(
+                    pot=pot,
+                    user=request.user,
+                    color=color,
+                )
+                avatar.save()
+            return redirect('main:pot_detail', pot_id=pot.id)
+
+    context = {
+        'pot': pot,
+        'selected_color': selected_color,
+        'used_colors': used_colors,
+        'error': error,
+    }
+    return render(request, 'pages/avatar_setting.html', context)

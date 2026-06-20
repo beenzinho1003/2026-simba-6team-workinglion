@@ -17,8 +17,7 @@
                 <p class="title-text">내 캐릭터 색상 선택</p>
             </div>
             <div class="pot-name-box">
-                <!--pot name 아직 동적할당 안함-->    
-                <p class="pot-name-text">pot-name</p>
+                <p class="pot-name-text">{{ pot.pot_name }}</p>
             </div> 
         </div>
         <div class="avatar-frame">
@@ -27,29 +26,27 @@
             </div>
             <p class="color-text" id="color-name-text">파란색</p>
         </div>
-        <!--액션주소 아직모름
-        //추가로 동일한색상 로직 아직없음-->
-        <form method="POST">
+        <form action="{% url 'main:avatar_setting' pot.id %}" method="post">
             {% csrf_token %} 
             <div class="color-select-frame">
                 <p class="select-text">색상 선택</p>
                 <div class="radio-container">
-                    <input type="radio" id="color-blue" name="avatar_color" value="blue" checked required>
+                    <input type="radio" id="color-blue" name="color" value="blue" {% if selected_color == 'blue' %}checked{% endif %} {% if 'blue' in used_colors %}disabled{% endif %} required>
                     <label for="color-blue" class="color-circle" style="background-color: #5B79FF;"></label>
 
-                    <input type="radio" id="color-purple" name="avatar_color" value="purple" required>
+                    <input type="radio" id="color-purple" name="color" value="purple" {% if selected_color == 'purple' %}checked{% endif %} {% if 'purple' in used_colors %}disabled{% endif %} required>
                     <label for="color-purple" class="color-circle" style="background-color: #CB33DF;"></label>
 
-                    <input type="radio" id="color-olive" name="avatar_color" value="olive" required>
-                    <label for="color-olive" class="color-circle" style="background-color: #9DBF4A;"></label>
+                    <input type="radio" id="color-green" name="color" value="green" {% if selected_color == 'green' %}checked{% endif %} {% if 'green' in used_colors %}disabled{% endif %} required>
+                    <label for="color-green" class="color-circle" style="background-color: #9DBF4A;"></label>
 
-                    <input type="radio" id="color-red" name="avatar_color" value="red" required>
+                    <input type="radio" id="color-red" name="color" value="red" {% if selected_color == 'red' %}checked{% endif %} {% if 'red' in used_colors %}disabled{% endif %} required>
                     <label for="color-red" class="color-circle" style="background-color: #E85555;"></label>
 
-                    <input type="radio" id="color-gray" name="avatar_color" value="gray" required>
+                    <input type="radio" id="color-gray" name="color" value="gray" {% if selected_color == 'gray' %}checked{% endif %} {% if 'gray' in used_colors %}disabled{% endif %} required>
                     <label for="color-gray" class="color-circle" style="background-color: #A9A9A9;"></label>
 
-                    <input type="radio" id="color-pink" name="avatar_color" value="pink" required>
+                    <input type="radio" id="color-pink" name="color" value="pink" {% if selected_color == 'pink' %}checked{% endif %} {% if 'pink' in used_colors %}disabled{% endif %} required>
                     <label for="color-pink" class="color-circle" style="background-color: #FF5A96;"></label>
                 </div>
             </div>
@@ -60,7 +57,11 @@
                     <svg class="warning-diagram" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
                     <path d="M10.0003 3.33329C13.6762 3.33329 16.667 6.32413 16.667 9.99996C16.667 13.6758 13.6762 16.6666 10.0003 16.6666C6.32449 16.6666 3.33366 13.6758 3.33366 9.99996C3.33366 6.32413 6.32449 3.33329 10.0003 3.33329ZM10.0003 1.66663C5.39783 1.66663 1.66699 5.39746 1.66699 9.99996C1.66699 14.6025 5.39783 18.3333 10.0003 18.3333C14.6028 18.3333 18.3337 14.6025 18.3337 9.99996C18.3337 5.39746 14.6028 1.66663 10.0003 1.66663ZM10.8337 12.5H9.16699V14.1666H10.8337V12.5ZM9.16699 10.8333H10.8337L11.2503 5.83329H8.75033L9.16699 10.8333Z" fill="black"/>
                     </svg>
+                    {% if error %}
+                    <p class="warning-text">{{ error }}</p>
+                    {% else %}
                     <p class="warning-text">같은 팟 안에서 동일한 색상은 선택할 수 없어요!</p>
+                    {% endif %}
                 </div>
                 <button class="submit-btn" type="submit">이 색상으로 팟 입장하기</button>
             </div>
@@ -73,7 +74,7 @@
     const colorData = {
         'blue': { hex: '#5B79FF', wing: '#4A63CF', name: '파란색' },
         'purple': { hex: '#CB33DF', wing: '#A028AF', name: '보라색' },
-        'olive': { hex: '#9DBF4A', wing: '#7E993B', name: '연두색' },
+        'green': { hex: '#9DBF4A', wing: '#7E993B', name: '연두색' },
         'red': { hex: '#E85555', wing: '#C93E3E', name: '빨간색' },
         'gray': { hex: '#A9A9A9', wing: '#808080', name: '회색' },
         'pink': { hex: '#FF5A96', wing: '#D83B76', name: '분홍색' }
@@ -89,7 +90,7 @@
         rightStroke: document.getElementById('wing-right-stroke')
     };
 
-    const radioButtons = document.querySelectorAll('input[name="avatar_color"]');
+    const radioButtons = document.querySelectorAll('input[name="color"]');
 
     radioButtons.forEach(radio => {
         radio.addEventListener('change', (e) => {
