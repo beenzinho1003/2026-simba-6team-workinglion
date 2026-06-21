@@ -6,3 +6,8 @@
 button:active{
     transform: scale(0.96);
 }
+.box-list::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+}
