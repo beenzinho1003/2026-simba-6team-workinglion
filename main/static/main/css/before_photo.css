@@ -72,6 +72,7 @@ line-height: normal;
     width: 32px;
 height: 32px;
 aspect-ratio: 1/1;
+margin-top: 5px;
 }
 .body{
     display: flex;
@@ -173,15 +174,11 @@ align-self: stretch;
 border-radius: 10px;
 background: #FFE366;
 box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
+border: none;
 }
 .gallery_img{
     width: 26px;
 height: 26px;
-aspect-ratio: 1/1;
-}
-.camera_icon_img{
-    width: 27px;
-height: 27px;
 aspect-ratio: 1/1;
 }
 .btn-text{
