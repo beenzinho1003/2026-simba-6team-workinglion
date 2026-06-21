@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import *
 import datetime
 import random
+import string
 
 # Create your views here.
 def onboarding(request):
@@ -147,14 +148,17 @@ def create(request):
     new_pot.fee = fee
     new_pot.total_prize = (fee * pot_people) + 500
 
-    random_code = random.randint(100000,999999)
-    new_pot.pot_code = str(random_code)
+    string_pool = string.ascii_uppercase + string.digits 
+    result = ""
+    for i in range(6): 
+        result += random.choice(string_pool) 
+        
+    new_pot.pot_code = result
     new_pot.save()
 
     new_pot.participants.add(request.user)
 
     return redirect('main:avatar_setting', pot_id=new_pot.id)
-
 
 def avatar_setting(request, pot_id):
     if not request.user.is_authenticated:
