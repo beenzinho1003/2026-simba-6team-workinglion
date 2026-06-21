@@ -33,6 +33,7 @@
             <div class="body">
                 <div class="body-top">
                     <div class="subtitle">
+                        <!-------------------------------->
                         <p class="goal">{{ pot.pot_name }}</p>
                         <p class="date">{{ now|date:"Y.m.d" }}</p>
                     </div>
@@ -72,11 +73,6 @@
                             <p class="btn-text">갤러리에서 선택</p>
                             <input type="file" name="image" accept="image/*" required>
                         </label>
-
-                        <button class="photo" type="submit">
-                            <img src="{% static 'main/img/camera_icon.png' %}" class="camera_icon_img" alt="카매라 아이콘">
-                            <p class="btn-text">인증사진 업로드</p>
-                        </button>
 
                         {% if error %}
                         <p class="upload-text">{{ error }}</p>

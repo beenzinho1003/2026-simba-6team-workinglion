@@ -1,25 +1,85 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'main/css/join_pot.css' %}">
+    <link rel="stylesheet" href="{% static 'main/css/join_pot_animation.css' %}">
+
     <title>팟 참여하기</title>
 </head>
 <body>
     <main>
-        {% if pot %}
-        <a href="{% url 'main:pot_choice' %}">
-        <h1>{{ pot.pot_name }} 참여하기</h1>
-        </a>
-        {% else %}
-        <h1>팟 참여하기</h1>
-        {% endif %}
-        <form action="{% url 'main:join_pot_action' %}" method="post">
-            {% csrf_token %}
-            <label for="entry-code">참여 코드</label>
-            <input id="entry-code" type="text" name="entry_code" maxlength="6" required>
-            <button type="submit">참여하기</button>
-        </form>
+        <div class="container">
+            <div class="main">
+                <div class="header">
+                    <div class="back">
+                        <a href="{% url 'main:dashboard' %}">
+                            <div class="back-btn">
+                                <svg class="back-text" xmlns="http://www.w3.org/2000/svg" width="29" height="29" viewBox="0 0 29 29" fill="none">
+                                    <path d="M24.1668 14.5L4.8335 14.5M12.0835 21.75L4.8335 14.5L12.0835 7.25" stroke="black" stroke-width="1.625" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </a>
+                    </div>
+                    <h1>팟 참여하기</h1>
+                </div>
+
+                <div class="body">
+                    <form action="{% url 'main:join_pot_action' %}" method="post">
+                        {% csrf_token %}
+                        <div class="code">
+                            <label for="entry-code">입장코드 6자리</label>
+                                <div class="input">
+                                    <input 
+                                    id="entry-code" 
+                                    type="text" 
+                                    name="entry_code" 
+                                    maxlength="6" 
+                                    placeholder="친구에게 받은 입장코드를 입력하세요!"
+                                    required>
+                                    <button type="button" class="clear-btn">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 19 19" fill="none">
+                                            <path d="M9.5 0C4.25329 0 0 4.25329 0 9.5C0 14.7467 4.25329 19 9.5 19C14.7467 19 19 14.7467 19 9.5C18.9943 4.25563 14.7444 0.00567773 9.5 0ZM12.6667 11.548C12.9884 11.8441 13.0091 12.345 12.713 12.6667C12.4169 12.9884 11.9161 13.0091 11.5944 12.713C11.5783 12.6982 11.5629 12.6828 11.548 12.6667L9.5 10.6194L7.45275 12.6667C7.13825 12.9704 6.63709 12.9617 6.33335 12.6472C6.03706 12.3404 6.03706 11.854 6.33335 11.5472L8.3806 9.5L6.33335 7.45275C6.02961 7.13825 6.03833 6.63709 6.35283 6.33335C6.65961 6.03706 7.14597 6.03706 7.45275 6.33335L9.5 8.3806L11.548 6.33335C11.8441 6.01164 12.345 5.99086 12.6667 6.28696C12.9884 6.58306 13.0091 7.08388 12.713 7.40558C12.6982 7.42169 12.6828 7.43713 12.6667 7.45197L10.6194 9.5L12.6667 11.548Z" fill="#8F8E8E"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                        </div>
+                        <div class="entrance">
+                            <p class="point">현재 보유 포인트: nnpt</p> <!---->
+                            <button class="ent-btn" type="submit">
+                                <p class="btn-text">팟 입장하기(nnpt차감)</p><!------>
+                            </button>
+                        </div>
+                    
+                    </form>
+                </div>
+            </div>
+            </div>
+        </div>
     </main>
+    <script>
+        
+    const entryCodeInput = document.getElementById('entry-code');
+    const entranceBtn = document.querySelector('.ent-btn');
+    const clearBtn = document.querySelector('.clear-btn');
+
+
+    entryCodeInput.addEventListener('input', function() {
+        if (entryCodeInput.value.length === 6) {
+            entranceBtn.classList.add('active');
+        } else {
+            entranceBtn.classList.remove('active');
+        }
+    });
+
+
+    clearBtn.addEventListener('click', function() {
+        entryCodeInput.value = '';
+        entranceBtn.classList.remove('active');
+        entryCodeInput.focus();
+    });
+</script>
 </body>
 </html>

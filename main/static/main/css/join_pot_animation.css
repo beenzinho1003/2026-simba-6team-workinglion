@@ -1,0 +1,12 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.ent-btn.active {
+    background: #FFE357;
+    cursor: pointer;
+}
+.ent-btn.active:active{
+    transform: scale(0.98);
+}
