@@ -1,0 +1,29 @@
+.coin{
+    width: 103px;
+height: 43px;
+
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+
+margin-bottom: 20px;
+margin-left: 120px;
+border-radius: 30px;
+border: 1px solid var(--y3, #FFE357);
+background: #FFEFA6;
+}
+.icon-coin{
+    width: 27.5px;
+height: 27.5px;
+
+fill: var(--coin, #FFBF00);
+}
+.coin-num{
+    color: #000;
+font-family: Inter;
+font-size: 22px;
+font-style: normal;
+font-weight: 600;
+line-height: normal;
+}
