@@ -113,7 +113,7 @@
                                     <p class="people">{{ pot.pot_people }}명 | {{ pot.days }}일 챌린지</p>
                                 </div>
                                 <div class="d-day">
-                                    <p class="d-day-text">D - {{ pot.d_day }}</p>
+                                    {% if pot.is_ended %}<p class="d-day-text">완료</p>{% else %}<p class="d-day-text">D - {{ pot.d_day }}</p>{% endif %}
                                 </div>
                             </div>
                             <div class="box-right">

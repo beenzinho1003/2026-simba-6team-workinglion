@@ -71,7 +71,19 @@
 
                         {% if info.proof %}
                             <div class="badge-success">
+                                {% if info.user == request.user %}
                                 <p>인증</p>
+                                {% else %}
+                                <a href="{% url 'main:photo_vote' pot.id info.user.id %}"><p>인증</p></a>
+                                {% endif %}
+                            </div>
+                        {% elif info.vote_proof %}
+                            <div class="badge-fail">
+                                {% if info.user == request.user %}
+                                <p>인증 취소</p>
+                                {% else %}
+                                <a href="{% url 'main:photo_vote' pot.id info.user.id %}"><p>인증 취소</p></a>
+                                {% endif %}
                             </div>
                         {% else %}
                             <div class="badge-none">

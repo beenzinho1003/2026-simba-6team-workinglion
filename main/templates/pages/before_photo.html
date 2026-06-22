@@ -71,7 +71,7 @@
                 <div class="body-bottom">
                     <p class="upload-text">오늘 인증을 완료했어요</p>
                 </div>
-                {% else %}
+                {% elif can_authenticate %}
                 <form class="body-bottom" id="photo-form" method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                 
@@ -91,6 +91,10 @@
                     <p class="upload-text">{{ error }}</p>
                     {% endif %}
                 </form>
+                {% else %}
+                <div class="body-bottom">
+                    <p class="upload-text">{{ error }}</p>
+                </div>
                 {% endif %}
             </div>
         </div>

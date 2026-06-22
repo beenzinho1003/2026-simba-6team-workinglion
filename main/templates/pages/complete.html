@@ -1,12 +1,11 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'main/css/complete.css' %}">
-
-    <title>Document</title>
+    <title>팟 완료</title>
 </head>
 <body>
     <div class="container">
@@ -25,50 +24,54 @@
             <div class="body">
                 <div class="body-top">
                     <img src="{% static 'main/img/complete.png' %}" class="complete-bird" alt="완료 캐릭터">
-                    <!----------------------------------------------->
-                    <p class="title">{{pot.pot_name}} 팟 완료 !</p>
-                    <p class="subtext">{{pot.pot_people}}명 참여 | {{ pot.days }}일 챌린지 </p>
+                    <p class="title">{{ pot.pot_name }} 팟 완료!</p>
+                    <p class="subtext">{{ participant_count }}명 참여 | {{ pot.days }}일 챌린지</p>
                 </div>
                 <div class="body-bottom">
                     <div class="total">
                         <div class="total-body">
                             <div class="calculate">
-                                <p class="total-title">포인트 정산 ({{pot.pot_people}}인 · {{ pot.days }}일 기준)</p>
+                                <p class="total-title">포인트 정산 ({{ participant_count }}인 · {{ pot.days }}일 기준)</p>
                                 <div class="cal-text">
                                     <div class="entrance">
                                         <p class="entrance-text">인당 입장료</p>
-                                        <!----------입장료 수정----------->
-                                        <p class="entrance-cal">{{}}pt x {{pot.pot_people}}명 = {{}}pt</p>
+                                        <p class="entrance-cal">{{ pot.fee }}pt × {{ participant_count }}명 = {{ participant_prize }}pt</p>
                                     </div>
                                     <div class="bonus">
                                         <p class="entrance-text">보너스 포인트</p>
-                                        <p class="entrance-cal">+ {{}}pt</p>
+                                        <p class="entrance-cal">+ 500pt</p>
                                     </div>
                                 </div>
                             </div>
                             <div class="line"></div>
                             <div class="total-text">
                                 <p class="ttotal">총 상금</p>
-                                <p class="total-result">{{}}pt</p>
+                                <p class="total-result">{{ pot.total_prize }}pt</p>
                             </div>
                         </div>
                     </div>
                     <div class="ranking">
-                        <p class="rangking-title">  최종 순위 및 획득 포인트</p>
-                        <!--------------------for문 이용-------------------------->
-                        {% for [] in [] %}
+                        <p class="rangking-title">최종 순위 및 획득 포인트</p>
+                        {% for info in final_rank %}
                         <div class="rank">
                             <div class="rank-box">
                                 <div class="rank-body">
                                     <div class="body-left">
-                                        <img src="{}" class="medal" alt="메달">
+                                        {% if info.rank == 1 %}
+                                        <img src="{% static 'main/img/noto_1st-place-medal.png' %}" class="medal" alt="1위">
+                                        {% elif info.rank == 2 %}
+                                        <img src="{% static 'main/img/noto_2nd-place-medal.png' %}" class="medal" alt="2위">
+                                        {% elif info.rank == 3 %}
+                                        <img src="{% static 'main/img/noto_3rd-place-medal.png' %}" class="medal" alt="3위">
+                                        {% endif %}
                                         <div class="rank-text">
-                                            <p class="name">{{name}}</p>
-                                            <p class="percent">{{ }}/{{ }}회 · {{ }}%</p>
+                                            <p class="name">{{ info.user.profile.nickname }}</p>
+                                            <p class="percent">{{ info.count }}/{{ info.required_count }}회 · {{ info.achievement_rate }}%</p>
+                                            {% if info.is_success %}<p class="percent">성공</p>{% else %}<p class="percent">실패</p>{% endif %}
                                         </div>
                                     </div>
                                     <div class="body-right">
-                                        <p class="total-point">+ {{ }}pt</p>
+                                        <p class="total-point">+ {{ info.prize }}pt</p>
                                     </div>
                                 </div>
                             </div>

@@ -19,4 +19,6 @@ urlpatterns = [
     path('join_pot_action/<int:pot_id>/', join_pot_action, name='join_pot_action'),
     path('pot/<int:pot_id>/before_photo/', before_photo, name='before_photo'),
     path('pot/<int:pot_id>/after_photo/', after_photo, name='after_photo'),
+    path('pot/<int:pot_id>/photo_vote/<int:target_user_id>/', photo_vote, name='photo_vote'),
+    path('pot/<int:pot_id>/complete/', complete, name='complete'),
 ]

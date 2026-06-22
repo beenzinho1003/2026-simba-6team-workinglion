@@ -1,3 +1,4 @@
+import datetime
 import shutil
 import tempfile
 from io import BytesIO
@@ -9,7 +10,7 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from accounts.models import Profile
-from .models import Pot, PotAvatar, Proof
+from .models import Pot, PotAvatar, Proof, Vote
 
 
 class CoreFlowTests(TestCase):
@@ -119,6 +120,7 @@ class CoreFlowTests(TestCase):
         member_avatar = PotAvatar.objects.get(pot=self.pot, user=self.member)
         self.assertEqual(self.host.profile.point, 3450)
         self.assertEqual(member_avatar.item, 'post')
+        self.assertIsNotNone(member_avatar.item_applied_at)
 
     def test_nonparticipant_cannot_access_photo_pages(self):
         self.client.force_login(self.outsider)
@@ -153,3 +155,104 @@ class CoreFlowTests(TestCase):
                 host_info = info
         self.assertIsNotNone(host_info)
         self.assertIsNone(host_info['proof'])
+    def test_host_pays_fee_and_auth_days_are_saved(self):
+        self.client.force_login(self.host)
+        response = self.client.post(reverse('main:create'), {
+            'pot-name': '저녁 독서',
+            'challenge_term': '7',
+            'people': '2',
+            'auth_mon': 'mon',
+            'auth_wed': 'wed',
+        })
+
+        new_pot = Pot.objects.get(pot_name='저녁 독서')
+        self.assertRedirects(response, reverse('main:avatar_setting', args=[new_pot.id]))
+        self.host.profile.refresh_from_db()
+        self.assertEqual(self.host.profile.point, 2800)
+        self.assertEqual(new_pot.total_prize, 1200)
+        self.assertEqual(new_pot.auth_days, 'mon,wed')
+
+    def test_non_auth_day_blocks_photo_upload(self):
+        today = datetime.date.today()
+        blocked_day = (today.weekday() + 1) % 7
+        day_codes = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
+        self.pot.auth_days = day_codes[blocked_day]
+        self.pot.save()
+
+        self.client.force_login(self.host)
+        response = self.client.post(
+            reverse('main:before_photo', args=[self.pot.id]),
+            {'image': self.make_image()},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, '오늘은 인증 요일이 아닙니다.')
+        self.assertFalse(Proof.objects.filter(pot=self.pot, user=self.host).exists())
+
+    def test_item_expires_after_48_hours(self):
+        avatar = PotAvatar.objects.get(pot=self.pot, user=self.member)
+        avatar.item = 'post'
+        avatar.item_applied_at = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours=49)
+        avatar.save()
+
+        self.client.force_login(self.host)
+        self.client.get(reverse('main:pot_detail', args=[self.pot.id]))
+
+        avatar.refresh_from_db()
+        self.assertIsNone(avatar.item)
+        self.assertIsNone(avatar.item_applied_at)
+
+    def test_vote_can_invalidate_and_restore_proof(self):
+        proof = Proof.objects.create(
+            pot=self.pot,
+            user=self.member,
+            image=self.make_image('vote.png'),
+        )
+        self.client.force_login(self.host)
+        vote_url = reverse('main:photo_vote', args=[self.pot.id, self.member.id])
+
+        response = self.client.post(vote_url, {'vote': 'reject'})
+        self.assertRedirects(response, vote_url)
+        proof.refresh_from_db()
+        self.assertFalse(proof.is_valid)
+        self.assertEqual(Vote.objects.filter(proof=proof, voter=self.host).count(), 1)
+
+        self.client.post(vote_url, {'vote': 'approve'})
+        proof.refresh_from_db()
+        self.assertTrue(proof.is_valid)
+        self.assertEqual(Vote.objects.filter(proof=proof, voter=self.host).count(), 1)
+
+    def test_completion_pays_successful_user_once_and_failure_has_no_extra_charge(self):
+        today = datetime.date.today()
+        self.pot.start_date = today - datetime.timedelta(days=7)
+        self.pot.auth_days = 'mon,tue,wed,thu,fri,sat,sun'
+        self.pot.save()
+
+        self.host.profile.point = 2800
+        self.host.profile.save()
+        self.member.profile.point = 2800
+        self.member.profile.save()
+
+        for day_number in range(6):
+            proof = Proof.objects.create(
+                pot=self.pot,
+                user=self.member,
+                image=self.make_image('complete-' + str(day_number) + '.png'),
+            )
+            proof_date = self.pot.start_date + datetime.timedelta(days=day_number)
+            Proof.objects.filter(pk=proof.pk).update(auth_date=proof_date)
+
+        self.client.force_login(self.host)
+        complete_url = reverse('main:complete', args=[self.pot.id])
+        response = self.client.get(complete_url)
+        self.assertEqual(response.status_code, 200)
+
+        self.host.profile.refresh_from_db()
+        self.member.profile.refresh_from_db()
+        self.pot.refresh_from_db()
+        self.assertEqual(self.host.profile.point, 2800)
+        self.assertEqual(self.member.profile.point, 4700)
+        self.assertTrue(self.pot.is_completed)
+
+        self.client.get(complete_url)
+        self.member.profile.refresh_from_db()
+        self.assertEqual(self.member.profile.point, 4700)

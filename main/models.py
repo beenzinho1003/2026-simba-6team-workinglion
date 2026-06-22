@@ -7,6 +7,7 @@ class Pot(models.Model):
     host = models.ForeignKey(User, null=False, blank=False, on_delete=models.CASCADE)
     pot_name = models.CharField(max_length=100)
     days = models.IntegerField()
+    auth_days = models.CharField(max_length=30, default='mon,tue,wed,thu,fri,sat,sun')
     fee = models.IntegerField()
     total_prize = models.IntegerField()
     pot_people = models.IntegerField()
@@ -40,6 +41,7 @@ class PotAvatar(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     color = models.CharField(max_length=20)
     item = models.CharField(max_length=20, null=True, blank=True)
+    item_applied_at = models.DateTimeField(null=True, blank=True)
 
 class Vote(models.Model):
     proof = models.ForeignKey(Proof, on_delete=models.CASCADE, related_name='votes')

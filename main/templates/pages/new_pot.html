@@ -43,25 +43,25 @@
                 <div class="section-group">
                     <p class="section-title">인증 요일</p>
                     <div class="day-btn-container">
-                        <input type="checkbox" id="day-mon" name="auth_days" value="mon">
+                        <input type="checkbox" id="day-mon" name="auth_mon" value="mon">
                         <label for="day-mon" class="day-btn">월</label>
 
-                        <input type="checkbox" id="day-tue" name="auth_days" value="tue">
+                        <input type="checkbox" id="day-tue" name="auth_tue" value="tue">
                         <label for="day-tue" class="day-btn">화</label>
 
-                        <input type="checkbox" id="day-wed" name="auth_days" value="wed">
+                        <input type="checkbox" id="day-wed" name="auth_wed" value="wed">
                         <label for="day-wed" class="day-btn">수</label>
 
-                        <input type="checkbox" id="day-thu" name="auth_days" value="thu">
+                        <input type="checkbox" id="day-thu" name="auth_thu" value="thu">
                         <label for="day-thu" class="day-btn">목</label>
 
-                        <input type="checkbox" id="day-fri" name="auth_days" value="fri">
+                        <input type="checkbox" id="day-fri" name="auth_fri" value="fri">
                         <label for="day-fri" class="day-btn">금</label>
 
-                        <input type="checkbox" id="day-sat" name="auth_days" value="sat">
+                        <input type="checkbox" id="day-sat" name="auth_sat" value="sat">
                         <label for="day-sat" class="day-btn">토</label>
 
-                        <input type="checkbox" id="day-sun" name="auth_days" value="sun">
+                        <input type="checkbox" id="day-sun" name="auth_sun" value="sun">
                         <label for="day-sun" class="day-btn">일</label>
                     </div>
                 </div>
@@ -118,7 +118,7 @@ let selectedPeople = 0; // 선택한 인원 수
 // 2. HTML 요소
 const routineInput = document.querySelector('.routine-input'); 
 const termRadios = document.querySelectorAll('input[name="challenge_term"]'); 
-const dayCheckboxes = document.querySelectorAll('input[name="auth_days"]'); 
+const dayCheckboxes = document.querySelectorAll('.day-btn-container input[type="checkbox"]');
 const peopleSelect = document.getElementById('people');
 const displayDays = document.getElementById('display-days');
 const displayEntryFee = document.getElementById('display-entry-fee');
