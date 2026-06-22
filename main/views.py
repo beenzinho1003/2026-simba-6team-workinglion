@@ -73,6 +73,12 @@ def dashboard(request):
         pot.d_day = max((get_end_date(pot) - today).days, 0)
         pot.is_ended = is_pot_ended(pot, today)
         pot.is_authenticated_today = Proof.objects.filter(pot=pot, user=request.user, auth_date=today).exists()
+    empty_slots = range(max(0, 4 - len(pots))) 
+    
+    return render(request, 'pages/dashboard.html', {
+        'pots': pots,
+        'empty_slots': empty_slots
+    })
 
     return render(request, 'pages/dashboard.html', {'pots': pots})
 def pot_detail(request, pot_id):
