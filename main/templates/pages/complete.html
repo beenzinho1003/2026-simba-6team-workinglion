@@ -52,31 +52,33 @@
                     </div>
                     <div class="ranking">
                         <p class="rangking-title">최종 순위 및 획득 포인트</p>
-                        {% for info in final_rank %}
-                        <div class="rank">
-                            <div class="rank-box">
-                                <div class="rank-body">
-                                    <div class="body-left">
-                                        {% if info.rank == 1 %}
-                                        <img src="{% static 'main/img/noto_1st-place-medal.png' %}" class="medal" alt="1위">
-                                        {% elif info.rank == 2 %}
-                                        <img src="{% static 'main/img/noto_2nd-place-medal.png' %}" class="medal" alt="2위">
-                                        {% elif info.rank == 3 %}
-                                        <img src="{% static 'main/img/noto_3rd-place-medal.png' %}" class="medal" alt="3위">
-                                        {% endif %}
-                                        <div class="rank-text">
-                                            <p class="name">{{ info.user.profile.nickname }}</p>
-                                            <p class="percent">{{ info.count }}/{{ info.required_count }}회 · {{ info.achievement_rate }}%</p>
-                                            {% if info.is_success %}<p class="percent">성공</p>{% else %}<p class="percent">실패</p>{% endif %}
+                        <div class="rank-list">
+                            {% for info in final_rank %}
+                            <div class="rank">
+                                <div class="rank-box {% if info.rank == 1 %}rank-1{% elif info.rank == 2 %}rank-2{% elif info.rank == 3 %}rank-3{% else %}rank-other{% endif %}">
+                                    <div class="rank-body">
+                                        <div class="body-left">
+                                            {% if info.rank == 1 %}
+                                            <img src="{% static 'main/img/noto_1st-place-medal.png' %}" class="medal" alt="1위">
+                                            {% elif info.rank == 2 %}
+                                            <img src="{% static 'main/img/noto_2nd-place-medal.png' %}" class="medal" alt="2위">
+                                            {% elif info.rank == 3 %}
+                                            <img src="{% static 'main/img/noto_3rd-place-medal.png' %}" class="medal" alt="3위">
+                                            {% endif %}
+                                            <div class="rank-text">
+                                                <p class="name">{{ info.user.profile.nickname }}</p>
+                                                <p class="percent">{{ info.count }}/{{ info.required_count }}회 · {{ info.achievement_rate }}%</p>
+                                                <!-- {% if info.is_success %}<p class="percent">성공</p>{% else %}<p class="percent">실패</p>{% endif %} -->
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="body-right">
-                                        <p class="total-point">+ {{ info.prize }}pt</p>
+                                        <div class="body-right">
+                                            <p class="total-point">+ {{ info.prize }}pt</p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
                     </div>
                 </div>
             </div>

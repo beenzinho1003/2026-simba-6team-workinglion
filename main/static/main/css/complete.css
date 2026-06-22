@@ -116,12 +116,11 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 14px;
+    gap: 8px;
     align-self: stretch;
 }
 .total-title{
-    align-self: stretch;
-
+    text-align: left;
     color: #8F8E8E;
     font-family: Inter;
     font-size: 14px;
@@ -139,6 +138,7 @@
 .entrance{
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 100px;
     align-self: stretch;
 }
@@ -149,6 +149,7 @@
     font-style: normal;
     font-weight: 400;
     line-height: normal;
+    white-space: nowrap;
 }
 .entrance-cal{
     color: #000;
@@ -157,10 +158,19 @@
     font-style: normal;
     font-weight: 400;
     line-height: normal;
+    text-align: right;
+    white-space: nowrap;
+}
+.bonus{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
 }
 .line{
     width: 337px;
     height: 0.5px;
+    background: #CFCFCF;
 }
 .total-text{
     display: flex;
@@ -184,6 +194,11 @@
     font-weight: 500;
     line-height: normal;
 }
+.rank-list{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
 .rank-box{
     display: flex;
     height: 60px;
@@ -192,9 +207,19 @@
     align-items: flex-start;
     gap: 10px;
     align-self: stretch;
-
     border-radius: 10px;
+}
+.rank-1{
     background: #FBE51E;
+}
+.rank-2{
+    background: #FFF278;
+}
+.rank-3{
+    background: #FFF59C;
+}
+.rank-other{
+    background: #FFF9C6;
 }
 .rank-body{
     display: flex;
@@ -218,6 +243,7 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 1px;
+    text-align: left;
 }
 .name{
     align-self: stretch;
@@ -244,4 +270,44 @@
     font-style: normal;
     font-weight: 400;
     line-height: normal;
+}
+.rangking-title{
+    color: #8F8E8E;
+    font-family: Inter;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    text-align: left;
+    margin-left: 5px;
+}
+.name{
+    color: #000;
+    font-family: Inter;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+.percent{
+    color: #7D7D7D;
+    font-family: Inter;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+.total-point{
+    color: #AE4C00;
+    font-family: Inter;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+.rank-body{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }
