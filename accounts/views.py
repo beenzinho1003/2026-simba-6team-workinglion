@@ -1,39 +1,36 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib import auth
-from django.contrib import messages
 import re
 from .models import Profile
 
 def signup(request):
     if request.method == 'POST':
-        email_data = request.POST['email']
-        password = request.POST['password']
-        confirm = request.POST['password-check']
+        email_data = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '')
+        confirm = request.POST.get('password-check', '')
 
         if not email_data:
-            messages.error(request, '이메일을 다시 입력해주세요.')
-            return render(request, 'accounts/signup.html')
+            return render(request, 'accounts/signup.html', {'error': '이메일을 다시 입력해주세요.'})
+
+        if not re.match(r'^[^@\s]+@[^@\s]+\.[^@\s]+$', email_data):
+            return render(request, 'accounts/signup.html', {'error': '올바른 이메일 형식을 입력해주세요.'})
 
         if User.objects.filter(username=email_data).exists():
-            messages.error(request, '이미 사용 중인 이메일입니다.')
-            return render(request, 'accounts/signup.html')
+            return render(request, 'accounts/signup.html', {'error': '이미 사용 중인 이메일입니다.'})
 
-        elif len(password) < 8 or not re.search(r'[A-Z]', password) or not re.search(r'[a-z]', password):
-            messages.error(request, '알파벳 대문자, 소문자 포함 8글자 이상입력하세요')
-            return render(request, 'accounts/signup.html')
+        if len(password) < 8 or not re.search(r'[A-Z]', password) or not re.search(r'[a-z]', password):
+            context = {'error': '알파벳 대문자, 소문자 포함 8글자 이상 입력하세요.'}
+            return render(request, 'accounts/signup.html', context)
 
-        elif password != confirm:
-            messages.error(request, '설정한 비밀번호와 불일치합니다.')
-            return render(request, 'accounts/signup.html')
-            
-        else:
-            request.session['temp_email'] = email_data
-            request.session['temp_password'] = password
-            return redirect('accounts:signup_nickname')
+        if password != confirm:
+            return render(request, 'accounts/signup.html', {'error': '설정한 비밀번호와 불일치합니다.'})
+
+        request.session['temp_email'] = email_data
+        request.session['temp_password'] = password
+        return redirect('accounts:signup_nickname')
 
     return render(request, 'accounts/signup.html')
-
 def signup_nickname(request):
     email_data = request.session.get('temp_email')
     password = request.session.get('temp_password')
@@ -71,19 +68,20 @@ def signup_nickname(request):
 
 def login(request):
     if request.method == 'POST':
-        email_data = request.POST['email']
-        password = request.POST['password']
-        
+        email_data = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '')
+
+        if not email_data or not password:
+            return render(request, 'accounts/login.html', {'error': '이메일과 비밀번호를 입력해주세요.'})
+
         user = auth.authenticate(request, username=email_data, password=password)
         if user is not None:
             auth.login(request, user)
             return redirect('main:dashboard')
-        else:
-            return render(request, 'accounts/login.html')
-            
-    elif request.method == 'GET':
-        return render(request, 'accounts/login.html')
 
+        return render(request, 'accounts/login.html', {'error': '이메일 또는 비밀번호가 올바르지 않습니다.'})
+
+    return render(request, 'accounts/login.html')
 def logout(request):
     auth.logout(request)
     return redirect('main:onboarding')

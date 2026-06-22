@@ -14,7 +14,13 @@ def signup_login(request):
 def dashboard(request):
     if not request.user.is_authenticated:
         return redirect('accounts:login')
+
+    today = datetime.date.today()
     pots = Pot.objects.filter(participants=request.user)
+    for pot in pots:
+        end_date = pot.start_date + datetime.timedelta(days=pot.days - 1)
+        pot.d_day = max((end_date - today).days, 0)
+
     return render(request, 'pages/dashboard.html', {'pots': pots})
 
 def pot_detail(request, pot_id):
@@ -27,6 +33,8 @@ def pot_detail(request, pot_id):
         return redirect('main:dashboard')
 
     today = datetime.date.today()
+    end_date = pot.start_date + datetime.timedelta(days=pot.days - 1)
+    d_day = max((end_date - today).days, 0)
 
     if request.method == 'POST':
         
@@ -49,20 +57,34 @@ def pot_detail(request, pot_id):
         target_user_id = request.POST.get('select-people')
 
         if treat_item and target_user_id:
-            target_user = get_object_or_404(User, pk=target_user_id)
             prices = {'post': 50, 'poop': 100, 'glasses': 70, 'flower': 70, 'gyaru': 120}
-            price = prices.get(treat_item, 0)
 
+            if treat_item not in prices:
+                return redirect('main:pot_detail', pot_id=pot.id)
+
+            if not target_user_id.isdigit():
+                return redirect('main:pot_detail', pot_id=pot.id)
+
+            if not pot.participants.filter(id=target_user_id).exists():
+                return redirect('main:pot_detail', pot_id=pot.id)
+
+            if str(request.user.id) == target_user_id:
+                return redirect('main:pot_detail', pot_id=pot.id)
+
+            target_user = get_object_or_404(User, pk=target_user_id)
+            if not PotAvatar.objects.filter(pot=pot, user=target_user).exists():
+                return redirect('main:pot_detail', pot_id=pot.id)
+
+            price = prices[treat_item]
             my_profile = request.user.profile
             if my_profile.point >= price:
                 my_profile.point -= price
                 my_profile.save()
 
-                if PotAvatar.objects.filter(pot=pot, user=target_user).exists():
-                    target_avatar = PotAvatar.objects.get(pot=pot, user=target_user)
-                    target_avatar.item = treat_item
-                    target_avatar.save()
-            
+                target_avatar = PotAvatar.objects.get(pot=pot, user=target_user)
+                target_avatar.item = treat_item
+                target_avatar.save()
+
             return redirect('main:pot_detail', pot_id=pot.id)
 
 
@@ -108,6 +130,7 @@ def pot_detail(request, pot_id):
         'participants': participants,
         'participant_infos': participant_infos,
         'my_today_proof': my_today_proof,
+        'd_day': d_day,
     }
     return render(request, 'pages/pot_detail.html', context)
 
@@ -131,7 +154,7 @@ def join_pot_action(request, pot_id=None):
     if request.method != "POST":
         return redirect('main:join_pot')
 
-    input_code = request.POST.get('entry_code')
+    input_code = request.POST.get('entry_code', '').strip().upper()
 
     if not input_code:
         context = {'error': '입장코드를 입력해주세요.'}
@@ -181,22 +204,46 @@ def create(request):
     if not request.user.is_authenticated:
         return redirect('accounts:login')
 
-    new_pot = Pot()
+    if request.method != 'POST':
+        return redirect('main:new_pot')
 
-    new_pot.pot_name = request.POST['pot-name']
-    new_pot.host = request.user
-    days = int(request.POST['challenge_term'])
-    pot_people = int(request.POST['people'])
+    pot_name = request.POST.get('pot-name', '').strip()
+    challenge_term = request.POST.get('challenge_term')
+    people = request.POST.get('people')
+    user_profile = request.user.profile
 
-    new_pot.days = days
-    new_pot.pot_people = pot_people
+    if not pot_name:
+        context = {'user_profile': user_profile, 'error': '팟 이름을 입력해주세요.'}
+        return render(request, 'pages/new_pot.html', context)
+
+    if len(pot_name) > 100:
+        context = {'user_profile': user_profile, 'error': '팟 이름은 100자 이하로 입력해주세요.'}
+        return render(request, 'pages/new_pot.html', context)
+
+    if challenge_term not in ['7', '14', '30']:
+        context = {'user_profile': user_profile, 'error': '챌린지 기간을 선택해주세요.'}
+        return render(request, 'pages/new_pot.html', context)
+
+    if people not in ['2', '3', '4', '5', '6']:
+        context = {'user_profile': user_profile, 'error': '팟 인원을 선택해주세요.'}
+        return render(request, 'pages/new_pot.html', context)
+
+    days = int(challenge_term)
+    pot_people = int(people)
     fee = days * 100
-    new_pot.fee = fee
-    new_pot.total_prize = (fee * pot_people) + 500
+
+    new_pot = Pot(
+        pot_name=pot_name,
+        host=request.user,
+        days=days,
+        pot_people=pot_people,
+        fee=fee,
+        total_prize=(fee * pot_people) + 500,
+    )
 
     string_pool = string.ascii_uppercase + string.digits
     while True:
-        result = ""
+        result = ''
         for i in range(6):
             result += random.choice(string_pool)
 
@@ -205,11 +252,9 @@ def create(request):
 
     new_pot.pot_code = result
     new_pot.save()
-
     new_pot.participants.add(request.user)
 
     return redirect('main:avatar_setting', pot_id=new_pot.id)
-
 def avatar_setting(request, pot_id):
     if not request.user.is_authenticated:
         return redirect('accounts:login')

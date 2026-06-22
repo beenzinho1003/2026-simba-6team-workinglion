@@ -83,6 +83,9 @@
                 </div>
                 
             </div>
+            {% if error %}
+            <p class="bottom-text">{{ error }}</p>
+            {% endif %}
             <button type="submit" class="button" id="signup-btn" disabled>
                 <p class="button-text">회원가입</p>
             </button>

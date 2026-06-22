@@ -485,3 +485,26 @@ input[name="treat-item"]:checked + .item-box {
     font-weight: 400;
     line-height: normal;
 }
+.avatar-wrapper[data-color="blue"] > svg #avatar-body { fill: #5B79FF; }
+.avatar-wrapper[data-color="blue"] > svg #wing-left-fill,
+.avatar-wrapper[data-color="blue"] > svg #wing-right-fill { fill: #4A63CF; stroke: #4A63CF; }
+
+.avatar-wrapper[data-color="purple"] > svg #avatar-body { fill: #CB33DF; }
+.avatar-wrapper[data-color="purple"] > svg #wing-left-fill,
+.avatar-wrapper[data-color="purple"] > svg #wing-right-fill { fill: #A028AF; stroke: #A028AF; }
+
+.avatar-wrapper[data-color="green"] > svg #avatar-body { fill: #9DBF4A; }
+.avatar-wrapper[data-color="green"] > svg #wing-left-fill,
+.avatar-wrapper[data-color="green"] > svg #wing-right-fill { fill: #7E993B; stroke: #7E993B; }
+
+.avatar-wrapper[data-color="red"] > svg #avatar-body { fill: #E85555; }
+.avatar-wrapper[data-color="red"] > svg #wing-left-fill,
+.avatar-wrapper[data-color="red"] > svg #wing-right-fill { fill: #C93E3E; stroke: #C93E3E; }
+
+.avatar-wrapper[data-color="gray"] > svg #avatar-body { fill: #A9A9A9; }
+.avatar-wrapper[data-color="gray"] > svg #wing-left-fill,
+.avatar-wrapper[data-color="gray"] > svg #wing-right-fill { fill: #808080; stroke: #808080; }
+
+.avatar-wrapper[data-color="pink"] > svg #avatar-body { fill: #FF5A96; }
+.avatar-wrapper[data-color="pink"] > svg #wing-left-fill,
+.avatar-wrapper[data-color="pink"] > svg #wing-right-fill { fill: #D83B76; stroke: #D83B76; }
