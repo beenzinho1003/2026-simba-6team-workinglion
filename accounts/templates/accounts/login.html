@@ -61,6 +61,9 @@
                 </div>
                 
             </div>
+            {% if error %}
+            <p class="bottom-text">{{ error }}</p>
+            {% endif %}
             <button type="submit" class="button">
                 <p class="button-text">로그인</p>
             </button>
