@@ -4,6 +4,8 @@
     box-sizing: border-box;
 }
 
+
+
 .name-text{
     color: #000;
 font-family: Inter;
@@ -45,6 +47,8 @@ body{
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
+    min-height: 100dvh;
 }
 
 .main{
@@ -54,6 +58,7 @@ display: flex;
     flex-direction: column;
     align-items: center;
     gap: 29px;
+    
 
 }
 
@@ -174,7 +179,7 @@ background: #FFFBEF;
 
 .record-box{
     display: flex;
-    flex-direction: column;
+    align-items: center;
 }
 
 .pot-name{
@@ -236,14 +241,15 @@ line-height: normal;
     border: 2px solid #FFE357;
     background: #FFEFA6;
 }
-.footer-body{
+.footer-body {
     display: flex;
     width: 205px;
     justify-content: space-between;
     align-items: center;
     flex-shrink: 0;
 }
-.icon{
+
+.icon {
     display: flex;
     width: 29px;
     height: 38.035px;
@@ -256,35 +262,41 @@ line-height: normal;
     background: #FFEFA6;
     border: none;
 }
-.icon-home{
+
+.icon-home {
     width: 29px;
     height: 26.25px;
     flex-shrink: 0;
 }
-.icon-my{
-    width: 29px;
-    height: 26.25px;
+
+.icon-my {
+    width: 39px;
+    height: 39px;
     flex-shrink: 0;
 }
-.home-text{
-   
+
+.home-text {
+        color: #9E9E9E;
+
     font-family: Inter;
     font-size: 5.949px;
     font-style: normal;
-
     font-weight: 500;
     line-height: normal;
-     color: #9E9E9E;
 }
-.my-text{
-    color: #7A6229;
+
+.my-text {
+        color: #7A6229;
     font-family: Inter;
     font-size: 6.118px;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
+    width: 29px;
+    border-bottom:2px solid #7A6229;
 }
-a{
+
+a {
     text-decoration: none;
 }
 
@@ -295,3 +307,8 @@ font-style: normal;
 font-weight: 400;
 line-height: normal;
 text-decoration: underline;}
+
+.line{width: 29px;
+height: 2px;
+background: #7A6229;
+}
