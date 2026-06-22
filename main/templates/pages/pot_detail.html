@@ -28,11 +28,36 @@
             <div class="member-container">
                 <!--변수확인좀-->
                 {% for info in participant_infos %}
-                <div class="member-box">
-                    <!--여기도 상대의 링크 걸어야됌-->
-                    <div class="avatar-wrapper" data-color="{{ info.avatar_color }}">
-                        {% include 'pages/_bird_svg.html' %}
-                    </div>
+                    <div class="member-box">
+                        <style>
+                            .item-layer svg {
+                                width: 100% !important;
+                                height: 100% !important;
+                                display: block;
+                            }
+                        </style>
+    
+                        <div class="avatar-wrapper" data-color="{{ info.avatar_color }}" style="position: relative;">
+        
+                            {% include 'pages/_bird_svg.html' %}
+
+                            {% if info.avatar_item %}
+                                <div class="item-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none;">
+                                    {% if info.avatar_item == 'post' %}
+                                        {% include 'pages/_bird_post_svg.html' %}
+                                    {% elif info.avatar_item == 'poop' %}
+                                        {% include 'pages/_bird_poop_svg.html' %}
+                                    {% elif info.avatar_item == 'glasses' %}
+                                        {% include 'pages/_bird_glasses_svg.html' %}
+                                    {% elif info.avatar_item == 'flower' %}
+                                        {% include 'pages/_bird_flower_svg.html' %}
+                                    {% elif info.avatar_item == 'gyaru' %}
+                                        {% include 'pages/_bird_gyaru_svg.html' %}
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+        
+                        </div>
 
 
                     <div class="member-info">
@@ -64,70 +89,77 @@
                 <p class="gray-small">아이템으로 장난치기</p>
                 <p class="gray-small">보유 포인트: {{ request.user.profile.point }}pt</p>
             </div> 
-            <!--action어디로?-->
-            <div class="treat-container">
-                <div class="item-list">
-                    <input type="radio" id="item-post" name="treat-item" value="post" checked>
-                    <label for="item-post" class="item-box">
-                        <div class="item-img-box">
-                            {% include 'pages/_bird_post_svg.html' %}
-                        </div>
-                        <p class="item-name">바보 포스트잇 붙이기</p>
-                        <p class="item-price">50pt</p>
-                    </label>
+    
+            <form action="{% url 'main:pot_detail' pot.id %}" method="POST">
+                {% csrf_token %}
+        
+                <div class="treat-container">
+                    <div class="item-list">
+                        <input type="radio" id="item-post" name="treat-item" value="post" checked>
+                        <label for="item-post" class="item-box">
+                            <div class="item-img-box">
+                                {% include 'pages/_bird_post_svg.html' %}
+                            </div>
+                            <p class="item-name">바보 포스트잇 붙이기</p>
+                            <p class="item-price">50pt</p>
+                        </label>
 
-                    <input type="radio" id="item-poop" name="treat-item" value="poop">
-                    <label for="item-poop" class="item-box">
-                        <div class="item-img-box">
-                            {% include 'pages/_bird_poop_svg.html' %}
-                        </div>
-                        <p class="item-name">똥 던지기</p>
-                        <p class="item-price">100pt</p>
-                    </label>
+                        <input type="radio" id="item-poop" name="treat-item" value="poop">
+                        <label for="item-poop" class="item-box">
+                            <div class="item-img-box">
+                                {% include 'pages/_bird_poop_svg.html' %}
+                            </div>
+                            <p class="item-name">똥 던지기</p>
+                            <p class="item-price">100pt</p>
+                        </label>
 
-                    <input type="radio" id="item-glasses" name="treat-item" value="glasses">
-                    <label for="item-glasses" class="item-box">
-                        <div class="item-img-box">
-                            {% include 'pages/_bird_glasses_svg.html' %}
-                        </div>
-                        <p class="item-name">회오리안경 씌우기</p>
-                        <p class="item-price">70pt</p>
-                    </label> 
+                        <input type="radio" id="item-glasses" name="treat-item" value="glasses">
+                        <label for="item-glasses" class="item-box">
+                            <div class="item-img-box">
+                                {% include 'pages/_bird_glasses_svg.html' %}
+                            </div>
+                            <p class="item-name">회오리안경 씌우기</p>
+                            <p class="item-price">70pt</p>
+                        </label> 
 
-                    <input type="radio" id="item-flower" name="treat-item" value="flower">
-                    <label for="item-flower" class="item-box">
-                        <div class="item-img-box">
-                            {% include 'pages/_bird_flower_svg.html' %}
-                        </div>
-                        <p class="item-name">꽃 달아주기</p>
-                        <p class="item-price">70pt</p>
-                    </label> 
+                        <input type="radio" id="item-flower" name="treat-item" value="flower">
+                        <label for="item-flower" class="item-box">
+                            <div class="item-img-box">
+                                {% include 'pages/_bird_flower_svg.html' %}
+                            </div>
+                            <p class="item-name">꽃 달아주기</p>
+                            <p class="item-price">70pt</p>
+                        </label> 
 
-                    <input type="radio" id="item-gyaru" name="treat-item" value="gyaru">
-                    <label for="item-gyaru" class="item-box">
-                        <div class="item-img-box">
-                            {% include 'pages/_bird_gyaru_svg.html' %}
-                        </div>
-                        <p class="item-name">갸루로 만들기</p>
-                        <p class="item-price">120pt</p>
-                    </label> 
+                        <input type="radio" id="item-gyaru" name="treat-item" value="gyaru">
+                        <label for="item-gyaru" class="item-box">
+                            <div class="item-img-box">
+                                {% include 'pages/_bird_gyaru_svg.html' %}
+                            </div>
+                            <p class="item-name">갸루로 만들기</p>
+                            <p class="item-price">120pt</p>
+                        </label> 
+                    </div>
+            
+                    <div class="select-container">
+                        <select class="select-btn" name="select-people" required>
+                            <option value="" disabled selected hidden><span class="select-text">선택</span></option>
+                            {% for info in participant_infos %}
+                                {% if info.user != request.user %}
+                                    <option class="select-text" value="{{ info.user.id }}">
+                                        {{ info.user.profile.nickname }}
+                                    </option>
+                                {% endif %}                    
+                            {% endfor %}
+                        </select>
+                        <p class="gray-small">에게 <span class="item-text" id="target-name">바보 포스트잇 붙이기</span> 적용</p>
+                    </div>  
+            
+                    <button type="submit" id="use-btn" disabled>사용하기(<span id="target-price">50pt</span>차감)</button>
                 </div>
-                <div class="select-container">
-                    <select class="select-btn" name="select-people" required>
-                        <option value="" disabled selected hidden><span class="select-text">선택</span></option>
-                        {% for info in participant_infos %}
-                            {% if info.user != request.user %}
-                                <option class="select-text" value="{{ info.user.id }}">
-                                    {{ info.user.profile.nickname }}
-                                </option>
-                            {% endif %}                    
-                        {% endfor %}
-                    </select>
-                    <p class="gray-small">에게 <span class="item-text" id="target-name">바보 포스트잇 붙이기</span> 적용</p>
-                </div>  
-                <button type="button" id="use-btn" disabled>사용하기(<span id="target-price">50pt</span>차감)</button>
-            </div>
-        </div>
+        
+            </form> </div>
+    
         
         <div class="code-frame">
             <div class="code-container">
@@ -144,7 +176,11 @@
             </div>
 
             <!--여기 앵커 연결-->
-            <a href="{% url 'main:before_photo' pot.id %}" class="certify-box">
+            {% if my_today_proof %}
+                <a href="{% url 'main:after_photo' pot.id %}" class="certify-box">
+            {% else %}
+                <a href="{% url 'main:before_photo' pot.id %}" class="certify-box">
+            {% endif %}
 
                 <svg xmlns="http://www.w3.org/2000/svg" width="35px" height="35px" viewBox="0 0 35 35" fill="none">
                 <path d="M17.5 23.3333C19.9162 23.3333 21.875 21.3745 21.875 18.9583C21.875 16.542 19.9162 14.5833 17.5 14.5833C15.0838 14.5833 13.125 16.542 13.125 18.9583C13.125 21.3745 15.0838 23.3333 17.5 23.3333Z" stroke="black" stroke-width="2.1875"/>

@@ -17,7 +17,6 @@ def dashboard(request):
     pots = Pot.objects.filter(participants=request.user)
     return render(request, 'pages/dashboard.html', {'pots': pots})
 
-
 def pot_detail(request, pot_id):
     if not request.user.is_authenticated:
         return redirect('accounts:login')
@@ -30,20 +29,42 @@ def pot_detail(request, pot_id):
     today = datetime.date.today()
 
     if request.method == 'POST':
+        
         image = request.FILES.get('image')
         if image:
             if not Proof.objects.filter(
-                pot=pot,
+                pot=pot, 
                 user=request.user,
-                auth_date=today,
+                auth_date=today
             ).exists():
                 proof = Proof(
-                    pot=pot,
-                    user=request.user,
-                    image=image,
+                    pot=pot, 
+                    user=request.user, 
+                    image=image
                 )
                 proof.save()
-        return redirect('main:pot_detail', pot_id=pot.id)
+            return redirect('main:pot_detail', pot_id=pot.id)
+
+        treat_item = request.POST.get('treat-item')
+        target_user_id = request.POST.get('select-people')
+
+        if treat_item and target_user_id:
+            target_user = get_object_or_404(User, pk=target_user_id)
+            prices = {'post': 50, 'poop': 100, 'glasses': 70, 'flower': 70, 'gyaru': 120}
+            price = prices.get(treat_item, 0)
+
+            my_profile = request.user.profile
+            if my_profile.point >= price:
+                my_profile.point -= price
+                my_profile.save()
+
+                if PotAvatar.objects.filter(pot=pot, user=target_user).exists():
+                    target_avatar = PotAvatar.objects.get(pot=pot, user=target_user)
+                    target_avatar.item = treat_item
+                    target_avatar.save()
+            
+            return redirect('main:pot_detail', pot_id=pot.id)
+
 
     participants = pot.participants.all()
     participant_infos = []
@@ -52,20 +73,22 @@ def pot_detail(request, pot_id):
     for participant in participants:
         proof = None
         avatar_color = None
+        avatar_item = None
+        
         if Proof.objects.filter(
-            pot=pot,
-            user=participant,
-            auth_date=today,
+            pot=pot, user=participant, 
+            auth_date=today
         ).exists():
             proof = Proof.objects.get(
-                pot=pot,
-                user=participant,
+                pot=pot, 
+                user=participant, 
                 auth_date=today,
             )
 
         if PotAvatar.objects.filter(pot=pot, user=participant).exists():
             avatar = PotAvatar.objects.get(pot=pot, user=participant)
             avatar_color = avatar.color
+            avatar_item = avatar.item
 
         if participant == request.user:
             my_today_proof = proof
@@ -74,6 +97,7 @@ def pot_detail(request, pot_id):
             'user': participant,
             'proof': proof,
             'avatar_color': avatar_color,
+            'avatar_item': avatar_item,
         })
 
     context = {
@@ -241,49 +265,46 @@ def before_photo(request, pot_id):
         return redirect('accounts:login')
 
     pot = get_object_or_404(Pot, pk=pot_id)
-
-    if not pot.participants.filter(id=request.user.id).exists():
-        return redirect('main:dashboard')
-
     today = datetime.date.today()
-    my_today_proof = None
-
-    if Proof.objects.filter(
-        pot=pot,
-        user=request.user,
-        auth_date=today,
-    ).exists():
-        my_today_proof = Proof.objects.get(
-            pot=pot,
-            user=request.user,
-            auth_date=today,
-        )
 
     if request.method == 'POST':
-        if my_today_proof:
-            return redirect('main:pot_detail', pot_id=pot.id)
-
         image = request.FILES.get('image')
-        if image:
-            proof = Proof(
-                pot=pot,
-                user=request.user,
-                image=image,
-            )
+        if image and not Proof.objects.filter(
+            pot=pot, 
+            user=request.user, 
+            auth_date=today
+        ).exists():
+            proof = Proof(pot=pot, user=request.user, image=image)
             proof.save()
-            return redirect('main:pot_detail', pot_id=pot.id)
+            
+        return redirect('main:before_photo', pot_id=pot.id)
 
-        context = {
-            'pot': pot,
-            'now': today,
-            'my_today_proof': my_today_proof,
-            'error': '인증사진을 선택해주세요.',
-        }
-        return render(request, 'pages/before_photo.html', context)
+    my_today_proof = None
+    if Proof.objects.filter(pot=pot, user=request.user, auth_date=today).exists():
+        my_today_proof = Proof.objects.get(pot=pot, user=request.user, auth_date=today)
+
+    context = {
+        'pot': pot,
+        'now': today,
+        'my_today_proof': my_today_proof, 
+    }
+    return render(request, 'pages/before_photo.html', context)
+
+def after_photo(request, pot_id):
+    if not request.user.is_authenticated:
+        return redirect('accounts:login')
+
+    pot = get_object_or_404(Pot, pk=pot_id)
+    today = datetime.date.today()
+    
+    my_today_proof = Proof.objects.filter(pot=pot, user=request.user, auth_date=today).first()
+
+    if not my_today_proof:
+        return redirect('main:before_photo', pot_id=pot.id)
 
     context = {
         'pot': pot,
         'now': today,
         'my_today_proof': my_today_proof,
     }
-    return render(request, 'pages/before_photo.html', context)
+    return render(request, 'pages/after_photo.html', context)

@@ -38,14 +38,19 @@
                         <p class="date">{{ now|date:"Y.m.d" }}</p>
                     </div>
                     <div class="photospace">
-                        <div class="spacebody">
-                            <img src="{% static 'main/img/camera.png' %}" class="photo_img" alt="카메라">
-                            <div class="bodytext">
-                                <p class="upload-text">인증 사진을 업로드하세요</p>
-                                <p class="subtext">하루 1회만 가능</p>
+                        {% if my_today_proof %}
+                            <img src="{{ my_today_proof.image.url }}" alt="인증샷" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px;">
+                        {% else %}
+                            <div class="spacebody">
+                                <img src="{% static 'main/img/camera.png' %}" class="photo_img" alt="카메라">
+                                <div class="bodytext">
+                                    <p class="upload-text">인증 사진을 업로드하세요</p>
+                                    <p class="subtext">하루 1회만 가능</p>
+                                </div>
                             </div>
-                        </div>
+                        {% endif %}
                     </div>
+                    
                     <div class="additional">
                         <div class="additional-row">
                             <svg class="check-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="12" viewBox="0 0 16 12" fill="none">
@@ -61,23 +66,26 @@
                         </div>
                     </div>
                 </div>
+                
                 {% if my_today_proof %}
                 <div class="body-bottom">
                     <p class="upload-text">오늘 인증을 완료했어요</p>
                 </div>
                 {% else %}
-                <form class="body-bottom" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
+                <form class="body-bottom" id="photo-form" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
                 
-                <label for="file-upload" class="gallery">
-                    <img src="{% static 'main/img/gallery.png' %}" class="gallery_img" alt="갤러리">
-                    <p class="btn-text">갤러리에서 선택</p>
-                </label>
-                <input id="file-upload" type="file" name="image" accept="image/*" required style="display: none;">
-                {% if error %}
-                <p class="upload-text">{{ error }}</p>
-                {% endif %}
-            </form>
+                    <label for="file-upload" class="gallery">
+                        <img src="{% static 'main/img/gallery.png' %}" class="gallery_img" alt="갤러리">
+                        <p class="btn-text">갤러리에서 선택</p>
+                    </label>
+                    
+                    <input id="file-upload" type="file" name="image" accept="image/*" required style="display: none;" onchange="this.form.submit();">
+                    
+                    {% if error %}
+                    <p class="upload-text">{{ error }}</p>
+                    {% endif %}
+                </form>
                 {% endif %}
             </div>
         </div>
