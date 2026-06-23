@@ -72,7 +72,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 31px;
+    gap: 15px;
     align-self: stretch;
 }
 .photospace{
@@ -191,30 +191,43 @@
     line-height: normal;
     text-align: center;
 }
+.vote-body{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
 .button-box{
     display: flex;
     flex-direction: row;
     justify-content: center;
-    gap: 120px;
+    gap: 20px;
     align-self: stretch;
 }
 
-.agree-btn{
+.agree-btn,
+.disagree-btn{
     display: flex;
     width: 165px;
     height: 82px;
-    padding: 11px 56px;
+    padding: 0;
     flex-direction: column;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
     gap: 10px;
-
+    border: none;
     border-radius: 20px;
+    cursor: pointer;
+}
+.agree-btn{
     background: #4ACA57;
+}
+.disagree-btn{
+    background: #FF5154;
 }
 .box-body1{
     display: flex;
-    width: 70px;
     flex-direction: column;
     align-items: center;
 }
@@ -223,21 +236,9 @@
     height: 33px;
     aspect-ratio: 1/1;
 }
-.disagree-btn{
-    display: flex;
-    width: 165px;
-    height: 82px;
-    padding: 14px 56px 18px 57px;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
 
-    border-radius: 20px;
-    background: #FF5154;
-}
 .box-body2{
     display: flex;
-    width: 70px;
     flex-direction: column;
     align-items: center;
 }
@@ -256,10 +257,11 @@
     font-style: normal;
     font-weight: 500;
     line-height: normal;
+    text-align: center;
+    margin: 0;
+    line-height: 1;
 }
 .disagree-text{
-    width: 100px;
-
     color: #000;
     text-align: center;
     font-family: Inter;
@@ -267,7 +269,13 @@
     font-style: normal;
     font-weight: 500;
     line-height: normal;
+    text-align: center;
+    margin: 0;
+    line-height: 1;
 }
 button{
     border: none;
+}
+button:active{
+    transform: scale(0.98);
 }

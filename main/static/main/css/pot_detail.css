@@ -541,3 +541,12 @@ input[name="treat-item"]:checked + .item-box {
     color: inherit;
     display: contents;
 }
+button:active{
+    transform: scale(0.98);
+}
+.certify-box:active{
+    transform: scale(0.98);
+}
+.back-btn:active{
+    transform: scale(0.98);
+}

@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'main/css/new_pot.css' %}">
+    <link rel="stylesheet" href="{% static 'main/css/new_pot_animation.css' %}">
     <title>Document</title>
 </head>
 <body>
@@ -107,7 +108,7 @@
                 {% if error %}
                 <p class="current-point">{{ error }}</p>
                 {% endif %}
-               <button type="submit" id="submit-btn" disabled>팟 생성하기</button>
+                <button type="submit" id="submit-btn" disabled>팟 생성하기</button>
             </div>
         </form>
     </div>
