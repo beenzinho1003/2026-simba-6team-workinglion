@@ -497,6 +497,7 @@ def photo_vote(request, pot_id, target_user_id):
         return redirect('main:photo_vote', pot_id=pot.id, target_user_id=target_user.id)
 
     votes = proof.votes.all()
+    total_participants = pot.participants.count() - 1
     responded_count = votes.count()
     agree_count = votes.filter(is_approved=True).count()
     disagree_count = votes.filter(is_approved=False).count()
@@ -511,6 +512,7 @@ def photo_vote(request, pot_id, target_user_id):
         'target_user': target_user,
         'proof': proof,
         'now': today,
+        'total_participants': total_participants,
         'responded_count': responded_count,
         'agree_count': agree_count,
         'agree_pct': agree_pct,
