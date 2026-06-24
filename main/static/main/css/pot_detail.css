@@ -219,6 +219,8 @@ width: 130px;
     justify-content: center;
     align-items: center;
     gap: 10px;
+    border-radius: 10px;
+background: #FF9798;
 }
 
 .badge-fail p{
