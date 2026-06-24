@@ -21,8 +21,8 @@ def get_end_date(pot):
 
 
 def is_pot_ended(pot, today):
-    # return True
-    return today > get_end_date(pot)
+    return True
+    # return today > get_end_date(pot)
 
 
 def is_auth_day(pot, today):
