@@ -64,6 +64,12 @@
                                             <img src="{% static 'main/img/noto_2nd-place-medal.png' %}" class="medal" alt="2위">
                                             {% elif info.rank == 3 %}
                                             <img src="{% static 'main/img/noto_3rd-place-medal.png' %}" class="medal" alt="3위">
+                                            {% elif info.rank == 4 %}
+                                            <img src="{% static 'main/img/Component 103.png' %}" class="medal" alt="4위">
+                                            {% elif info.rank == 5 %}
+                                            <img src="{% static 'main/img/Component 110.png' %}" class="medal" alt="5위">
+                                            {% elif info.rank == 6 %}
+                                            <img src="{% static 'main/img/Component 111.png' %}" class="medal" alt="6위">
                                             {% endif %}
                                             <div class="rank-text">
                                                 <p class="name">{{ info.user.profile.nickname }}</p>
