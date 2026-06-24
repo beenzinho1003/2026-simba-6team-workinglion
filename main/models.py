@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from PIL import Image
+from PIL import Image, ImageOps
 import datetime
 
 class Pot(models.Model):
@@ -29,6 +29,7 @@ class Proof(models.Model):
 
         if self.image:
             image = Image.open(self.image.path)
+            image = ImageOps.exif_transpose(image)
             
             max_size = (800, 800) 
             
